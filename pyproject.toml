@@ -27,5 +27,7 @@ dev-dependencies = [
 [tool.ruff]
 line-length = 88
 target-version = "py38"
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "D"]
-ignore = ["D203"]
+ignore = ["D203", "D213"]
