@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error
 
 def x2y(x, y):
-    """Calculate X2Y metric for continuous x and y."""
+    """Calculate X2Y metric for any x and continuous y."""
     x = pd.Series(x)
     y = pd.Series(y)
     mask = ~(x.isna() | y.isna())
@@ -13,7 +14,13 @@ def x2y(x, y):
     if len(x) < 2:
         return 0.0
 
-    X = x.values.reshape(-1, 1)
+    is_x_categorical = pd.api.types.is_categorical_dtype(x) or pd.api.types.is_object_dtype(x)
+    if is_x_categorical:
+        le = LabelEncoder()
+        X = le.fit_transform(x).reshape(-1, 1)
+    else:
+        X = x.values.reshape(-1, 1)
+
     baseline_pred = y.mean()
     baseline_error = mean_absolute_error(y, [baseline_pred] * len(y))
 
