@@ -1,6 +1,6 @@
 [project]
 name = "x2y-metric"
-version = "0.1.0"
+version = "0.1.1"
 description = "Compute the X2Y metric for detecting relationships between variables"
 authors = [{ name = "Your Name", email = "your.email@example.com" }]
 license = { text = "MIT" }
