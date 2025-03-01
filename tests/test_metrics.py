@@ -22,3 +22,9 @@ def test_categorical_x_continuous_y():
     y = pd.Series([1.0, 2.0, 1.1, 1.9])
     result = x2y(x, y)
     assert 70 < result < 90, f"Expected 70-90%, got {result}"
+
+def test_continuous_x_categorical_y():
+    x = pd.Series([1, 2, 3, 4])
+    y = pd.Series(["A", "B", "A", "B"])
+    result = x2y(x, y)
+    assert result == 100.0, f"Expected 100%, got {result}"

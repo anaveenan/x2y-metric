@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error
 
 def x2y(x, y):
-    """Calculate X2Y metric for any x and continuous y."""
+    """Calculate X2Y metric for any x and y."""
     x = pd.Series(x)
     y = pd.Series(y)
     mask = ~(x.isna() | y.isna())
@@ -21,13 +21,21 @@ def x2y(x, y):
     else:
         X = x.values.reshape(-1, 1)
 
-    baseline_pred = y.mean()
-    baseline_error = mean_absolute_error(y, [baseline_pred] * len(y))
+    is_y_categorical = pd.api.types.is_categorical_dtype(y) or pd.api.types.is_object_dtype(y)
+    if is_y_categorical:
+        baseline_pred = y.mode()[0]
+        baseline_error = 1 - (y == baseline_pred).mean()
+        model = DecisionTreeClassifier(random_state=42, max_depth=3)
+        error_metric = lambda y_true, y_pred: 1 - (y_true == y_pred).mean()
+    else:
+        baseline_pred = y.mean()
+        baseline_error = mean_absolute_error(y, [baseline_pred] * len(y))
+        model = DecisionTreeRegressor(random_state=42, max_depth=3)
+        error_metric = mean_absolute_error
 
-    model = DecisionTreeRegressor(random_state=42, max_depth=3)
     model.fit(X, y)
     preds = model.predict(X)
-    model_error = mean_absolute_error(y, preds)
+    model_error = error_metric(y, preds)
 
     if baseline_error == 0:
         return 0.0 if model_error == 0 else 100.0
