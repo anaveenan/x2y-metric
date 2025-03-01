@@ -1,3 +1,5 @@
+"""Module for computing the X2Y metric to detect variable relationships."""
+
 import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
@@ -15,27 +17,31 @@ def x2y(x, y):
     if len(x) < 2:
         return 0.0
 
-    is_x_categorical = pd.api.types.is_categorical_dtype(x) or pd.api.types.is_object_dtype(x)
+    is_x_categorical = (pd.api.types.is_categorical_dtype(x) or
+                        pd.api.types.is_object_dtype(x))
     if is_x_categorical:
         le = LabelEncoder()
-        X = le.fit_transform(x).reshape(-1, 1)
+        x_encoded = le.fit_transform(x).reshape(-1, 1)
     else:
-        X = x.values.reshape(-1, 1)
+        x_encoded = x.values.reshape(-1, 1)
 
-    is_y_categorical = pd.api.types.is_categorical_dtype(y) or pd.api.types.is_object_dtype(y)
+    is_y_categorical = (pd.api.types.is_categorical_dtype(y) or
+                        pd.api.types.is_object_dtype(y))
     if is_y_categorical:
         baseline_pred = y.mode()[0]
         baseline_error = 1 - (y == baseline_pred).mean()
         model = DecisionTreeClassifier(random_state=42, max_depth=3)
-        error_metric = lambda y_true, y_pred: 1 - (y_true == y_pred).mean()
+        def misclassification_error(y_true, y_pred):
+            return 1 - (y_true == y_pred).mean()
+        error_metric = misclassification_error
     else:
         baseline_pred = y.mean()
         baseline_error = mean_absolute_error(y, [baseline_pred] * len(y))
         model = DecisionTreeRegressor(random_state=42, max_depth=3)
         error_metric = mean_absolute_error
 
-    model.fit(X, y)
-    preds = model.predict(X)
+    model.fit(x_encoded, y)
+    preds = model.predict(x_encoded)
     model_error = error_metric(y, preds)
 
     if baseline_error == 0:
