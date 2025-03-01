@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from x2y_metric.metrics import x2y
+from x2y_metric.metrics import x2y,dx2y
 
 def test_continuous_x_continuous_y_linear():
     x = np.array([1, 2, 3, 4])
@@ -34,3 +34,13 @@ def test_categorical_x_categorical_y():
     y = pd.Series(["X", "Y", "X", "Y"])
     result = x2y(x, y)
     assert result == 100.0, f"Expected 100%, got {result}"
+
+def test_dx2y():
+    data = pd.DataFrame({
+        "cat_x": ["A", "B", "A", "B"],
+        "cont_y": [1.0, 2.0, 1.1, 1.9],
+        "cat_z": ["X", "Y", "X", "Y"]
+    })
+    result = dx2y(data)
+    assert result.shape == (3, 3)
+    assert result["cat_x"]["cat_x"] == 100.0

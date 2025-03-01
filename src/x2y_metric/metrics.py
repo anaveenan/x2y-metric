@@ -41,3 +41,18 @@ def x2y(x, y):
         return 0.0 if model_error == 0 else 100.0
     reduction = (baseline_error - model_error) / baseline_error
     return max(0.0, min(100.0, reduction * 100))
+
+def dx2y(data: pd.DataFrame) -> pd.DataFrame:
+    """Calculate X2Y metric for all pairs in a DataFrame."""
+    cols = data.columns
+    n = len(cols)
+    result = np.zeros((n, n))
+
+    for i in range(n):
+        for j in range(n):
+            if i <= j:
+                forward = x2y(data[cols[i]], data[cols[j]])
+                reverse = x2y(data[cols[j]], data[cols[i]])
+                result[i, j] = result[j, i] = (forward + reverse) / 2
+
+    return pd.DataFrame(result, index=cols, columns=cols)
