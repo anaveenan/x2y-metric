@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
-from x2y_metric.metrics import x2y,dx2y
+
+from x2y_metric.metrics import dx2y, x2y
+
 
 def test_continuous_x_continuous_y_linear():
     x = np.array([1, 2, 3, 4])

@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
-from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
-from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+
 
 def x2y(x, y):
     """Calculate X2Y metric for any x and y."""
