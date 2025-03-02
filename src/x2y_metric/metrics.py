@@ -17,7 +17,7 @@ def x2y(x, y):
     if len(x) < 2:
         return 0.0
 
-    is_x_categorical = (pd.api.types.is_categorical_dtype(x) or
+    is_x_categorical = (isinstance(x.dtype, pd.CategoricalDtype) or
                         pd.api.types.is_object_dtype(x))
     if is_x_categorical:
         le = LabelEncoder()
@@ -25,7 +25,7 @@ def x2y(x, y):
     else:
         x_encoded = x.values.reshape(-1, 1)
 
-    is_y_categorical = (pd.api.types.is_categorical_dtype(y) or
+    is_y_categorical = (isinstance(y.dtype, pd.CategoricalDtype) or
                         pd.api.types.is_object_dtype(y))
     if is_y_categorical:
         baseline_pred = y.mode()[0]
