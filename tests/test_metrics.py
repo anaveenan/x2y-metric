@@ -16,7 +16,7 @@ def test_continuous_x_continuous_y_linear():
 def test_semicircle():
     """Test X2Y for a nonlinear semicircle relationship."""
     np.random.seed(42)
-    x = np.arange(-1, 1.01, 0.01)
+    x = np.arange(-1, 1 + 0.01, 0.01)  # Max 1.0 to avoid NaN
     y = np.sqrt(1 - x**2) + np.random.normal(0, 0.05, len(x))
     result = x2y(x, y)
     assert 60 < result < 80, f"Expected ~68%, got {result}"
